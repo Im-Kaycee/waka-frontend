@@ -53,11 +53,19 @@ export function StepInput({
           </button>
         )}
       </div>
-      <Input
-        placeholder="What's the mode of Transport"
+      
+      {/* Transport Mode Select */}
+      <select
         value={transportMode}
         onChange={(e) => onTransportModeChange(e.target.value)}
-      />
+        className="flex h-12 w-full rounded-xl border-2 border-primary/30 bg-card px-4 py-3 text-base text-foreground transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+      >
+        <option value="">Select mode of transport</option>
+        <option value="walk">Walk</option>
+        <option value="cab">Cab</option>
+        <option value="bus">Bus</option>
+      </select>
+      
       <Input
         placeholder="Enter Instruction"
         value={instruction}

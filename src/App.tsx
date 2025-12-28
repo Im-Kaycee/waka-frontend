@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import RoutesPage from "./pages/Routes";
 import RouteSteps from "./pages/RouteSteps";
 import RouteSubmission from "./pages/RouteSubmission";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/route-steps" element={<RouteSteps />} />
           <Route path="/submit" element={<RouteSubmission />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

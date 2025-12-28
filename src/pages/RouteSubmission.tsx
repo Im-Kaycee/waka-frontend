@@ -5,30 +5,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepInput } from "@/components/route/StepInput";
 import { useToast } from "@/hooks/use-toast";
+import { submitRoute, type RouteSubmissionStep } from "@/services/routes";
+import { isAuthenticated } from "@/services/auth";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
-interface RouteStepInput {
+interface StepInputData {
   id: string;
-  transportMode: string;
+  mode: 'walk' | 'cab' | 'bus' | '';
   instruction: string;
-  dropName: string;
+  drop_name: string;
   landmark: string;
 }
 
-const createEmptyStep = (): RouteStepInput => ({
+const createEmptyStep = (): StepInputData => ({
   id: crypto.randomUUID(),
-  transportMode: "",
+  mode: '',
   instruction: "",
-  dropName: "",
+  drop_name: "",
   landmark: "",
 });
 
 export default function RouteSubmission() {
   const { toast } = useToast();
-  const [startingPoint, setStartingPoint] = useState("");
+  const navigate = useNavigate();
   const [destination, setDestination] = useState("");
-  const [steps, setSteps] = useState<RouteStepInput[]>([createEmptyStep(), createEmptyStep()]);
+  const [startingPoint, setStartingPoint] = useState("");
+  const [steps, setSteps] = useState<StepInputData[]>([createEmptyStep(), createEmptyStep()]);
+  const [submitting, setSubmitting] = useState(false);
 
-  const updateStep = (id: string, field: keyof RouteStepInput, value: string) => {
+  const updateStep = (id: string, field: keyof StepInputData, value: string) => {
     setSteps((prev) =>
       prev.map((step) => (step.id === id ? { ...step, [field]: value } : step))
     );
@@ -45,44 +51,87 @@ export default function RouteSubmission() {
   };
 
   const handleSaveProgress = () => {
+    const data = {
+      destination,
+      startingPoint,
+      steps,
+    };
+    localStorage.setItem('routeSubmissionDraft', JSON.stringify(data));
     toast({
       title: "Progress Saved",
       description: "Your route details have been saved locally.",
     });
   };
 
-  const handleSaveAll = () => {
-    if (!startingPoint || !destination) {
+  const handleSaveAll = async () => {
+    if (!isAuthenticated()) {
+      toast({
+        title: "Login Required",
+        description: "Please login to submit a route.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    if (!destination) {
       toast({
         title: "Missing Information",
-        description: "Please fill in the starting point and destination.",
+        description: "Please enter the destination.",
         variant: "destructive",
       });
       return;
     }
 
     const incompleteSteps = steps.some(
-      (step) => !step.transportMode || !step.instruction || !step.dropName
+      (step) => !step.mode || !step.instruction || !step.drop_name
     );
 
     if (incompleteSteps) {
       toast({
         title: "Incomplete Steps",
-        description: "Please fill in all required fields for each step.",
+        description: "Please fill in mode, instruction, and drop name for each step.",
         variant: "destructive",
       });
       return;
     }
 
-    toast({
-      title: "Route Submitted",
-      description: "Your route has been submitted for review.",
+    setSubmitting(true);
+
+    const submissionSteps: RouteSubmissionStep[] = steps.map((step, index) => ({
+      order: index + 1,
+      mode: step.mode as 'walk' | 'cab' | 'bus',
+      instruction: step.instruction,
+      drop_name: step.drop_name,
+      landmark: step.landmark,
+    }));
+
+    const result = await submitRoute({
+      destination,
+      city: 1, // You may want to make this dynamic
+      steps: submissionSteps,
     });
 
-    // Reset form
-    setStartingPoint("");
-    setDestination("");
-    setSteps([createEmptyStep(), createEmptyStep()]);
+    setSubmitting(false);
+
+    if (result.success) {
+      toast({
+        title: "Route Submitted",
+        description: "Your route has been submitted for review.",
+      });
+
+      // Clear form
+      setDestination("");
+      setStartingPoint("");
+      setSteps([createEmptyStep(), createEmptyStep()]);
+      localStorage.removeItem('routeSubmissionDraft');
+    } else {
+      toast({
+        title: "Submission Failed",
+        description: result.error || "Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -130,13 +179,13 @@ export default function RouteSubmission() {
               <StepInput
                 key={step.id}
                 stepNumber={index + 1}
-                transportMode={step.transportMode}
+                transportMode={step.mode}
                 instruction={step.instruction}
-                dropName={step.dropName}
+                dropName={step.drop_name}
                 landmark={step.landmark}
-                onTransportModeChange={(v) => updateStep(step.id, "transportMode", v)}
+                onTransportModeChange={(v) => updateStep(step.id, "mode", v)}
                 onInstructionChange={(v) => updateStep(step.id, "instruction", v)}
-                onDropNameChange={(v) => updateStep(step.id, "dropName", v)}
+                onDropNameChange={(v) => updateStep(step.id, "drop_name", v)}
                 onLandmarkChange={(v) => updateStep(step.id, "landmark", v)}
                 onDelete={() => deleteStep(step.id)}
                 canDelete={steps.length > 1}
@@ -149,7 +198,16 @@ export default function RouteSubmission() {
             <Button variant="outline" onClick={addStep}>
               Add Step
             </Button>
-            <Button onClick={handleSaveAll}>Save All</Button>
+            <Button onClick={handleSaveAll} disabled={submitting}>
+              {submitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                "Save All"
+              )}
+            </Button>
           </div>
         </div>
       </div>

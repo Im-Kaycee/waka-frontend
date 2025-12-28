@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { RouteStepCard } from "@/components/route/RouteStepCard";
-import type { Route, SearchParams } from "@/types/route";
+import type { Route, Place } from "@/services/routes";
+
+interface SearchParams {
+  from: Place;
+  to: Place;
+}
 
 export default function RouteSteps() {
   const navigate = useNavigate();
@@ -26,7 +31,7 @@ export default function RouteSteps() {
   }, [navigate]);
 
   const title = searchParams
-    ? `${searchParams.from?.canonical_name} to ${searchParams.to?.canonical_name}`
+    ? `${searchParams.from.canonical_name} to ${searchParams.to.canonical_name}`
     : "Route Details";
 
   if (!route) {
@@ -40,6 +45,9 @@ export default function RouteSteps() {
     );
   }
 
+  // Sort steps by order
+  const sortedSteps = [...route.steps].sort((a, b) => a.order - b.order);
+
   return (
     <MobileLayout>
       <PageHeader title={title} showBack />
@@ -48,11 +56,11 @@ export default function RouteSteps() {
           Route Steps
         </h2>
         <div className="bg-card rounded-xl border-2 border-primary/30 p-4 shadow-card animate-scale-in">
-          {route.steps.map((step, index) => (
+          {sortedSteps.map((step, index) => (
             <RouteStepCard
-              key={step.id}
-              transportMode={step.transportMode}
-              dropName={step.dropName}
+              key={step.order}
+              transportMode={step.mode}
+              dropName={step.drop_name}
               instruction={step.instruction}
               landmark={step.landmark}
               className="animate-fade-in"
@@ -60,6 +68,13 @@ export default function RouteSteps() {
             />
           ))}
         </div>
+        
+        {route.notes && (
+          <div className="mt-4 bg-accent rounded-xl p-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <h3 className="font-semibold text-foreground mb-2">Notes</h3>
+            <p className="text-sm text-muted-foreground">{route.notes}</p>
+          </div>
+        )}
       </div>
     </MobileLayout>
   );
