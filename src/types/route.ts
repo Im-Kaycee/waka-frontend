@@ -1,24 +1,26 @@
 export interface Place {
-  id: string;
+  id: number;
   canonical_name: string;
 }
 
 export interface RouteStep {
-  id: string;
-  transportMode: string;
+  order: number;
+  mode: 'walk' | 'cab' | 'bus';
   instruction: string;
-  dropName: string;
+  drop_name: string;
   landmark: string;
+  estimated_fare?: string;
 }
 
 export interface Route {
-  id: string;
-  duration: string;
-  difficulty: string;
-  description: string;
-  isRecommended?: boolean;
-  steps: RouteStep[];
+  id: number;
+  destination: Place;
+  starting_places: Place[];
+  recommended: boolean;
+  estimated_time: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   notes?: string;
+  steps: RouteStep[];
 }
 
 export interface SearchParams {
