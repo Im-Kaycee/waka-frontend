@@ -6,25 +6,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGreeting } from "@/hooks/useGreeting";
 import { getUser } from "@/services/auth";
-import { searchDestinations, searchStartingPlaces, type Place } from "@/services/routes";
+import {
+  searchDestinations,
+  searchStartingPlaces,
+  type Place,
+} from "@/services/routes";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
   const navigate = useNavigate();
   const user = getUser();
-  const greeting = useGreeting(user?.first_name || "Guest");
+  const greeting = useGreeting(user?.first_name || user?.username || "Guest");
 
   // Input values
   const [destinationInput, setDestinationInput] = useState("");
   const [startingPointInput, setStartingPointInput] = useState("");
 
   // Selected places
-  const [selectedDestination, setSelectedDestination] = useState<Place | null>(null);
-  const [selectedStartingPoint, setSelectedStartingPoint] = useState<Place | null>(null);
+  const [selectedDestination, setSelectedDestination] = useState<Place | null>(
+    null
+  );
+  const [selectedStartingPoint, setSelectedStartingPoint] =
+    useState<Place | null>(null);
 
   // Suggestions
-  const [destinationSuggestions, setDestinationSuggestions] = useState<Place[]>([]);
-  const [startingPointSuggestions, setStartingPointSuggestions] = useState<Place[]>([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState<Place[]>(
+    []
+  );
+  const [startingPointSuggestions, setStartingPointSuggestions] = useState<
+    Place[]
+  >([]);
 
   // Loading states
   const [destinationLoading, setDestinationLoading] = useState(false);
@@ -32,7 +43,8 @@ export default function Home() {
 
   // Show dropdowns
   const [showDestinationDropdown, setShowDestinationDropdown] = useState(false);
-  const [showStartingPointDropdown, setShowStartingPointDropdown] = useState(false);
+  const [showStartingPointDropdown, setShowStartingPointDropdown] =
+    useState(false);
 
   // Abort controllers
   const destinationAbortRef = useRef<AbortController | null>(null);
@@ -64,10 +76,13 @@ export default function Home() {
       destinationTimeoutRef.current = setTimeout(async () => {
         destinationAbortRef.current = new AbortController();
         try {
-          const places = await searchDestinations(value.trim(), destinationAbortRef.current.signal);
+          const places = await searchDestinations(
+            value.trim(),
+            destinationAbortRef.current.signal
+          );
           setDestinationSuggestions(places);
         } catch (error) {
-          if ((error as Error).name !== 'AbortError') {
+          if ((error as Error).name !== "AbortError") {
             setDestinationSuggestions([]);
           }
         } finally {
@@ -81,47 +96,50 @@ export default function Home() {
     }
   }, []);
 
-  const handleStartingPointInput = useCallback((value: string) => {
-    setStartingPointInput(value);
-    setSelectedStartingPoint(null);
+  const handleStartingPointInput = useCallback(
+    (value: string) => {
+      setStartingPointInput(value);
+      setSelectedStartingPoint(null);
 
-    if (!selectedDestination) return;
+      if (!selectedDestination) return;
 
-    // Cancel previous request
-    if (startingPointAbortRef.current) {
-      startingPointAbortRef.current.abort();
-    }
-    if (startingPointTimeoutRef.current) {
-      clearTimeout(startingPointTimeoutRef.current);
-    }
+      // Cancel previous request
+      if (startingPointAbortRef.current) {
+        startingPointAbortRef.current.abort();
+      }
+      if (startingPointTimeoutRef.current) {
+        clearTimeout(startingPointTimeoutRef.current);
+      }
 
-    if (value.trim().length >= 3) {
-      setStartingPointLoading(true);
-      setShowStartingPointDropdown(true);
+      if (value.trim().length >= 3) {
+        setStartingPointLoading(true);
+        setShowStartingPointDropdown(true);
 
-      startingPointTimeoutRef.current = setTimeout(async () => {
-        startingPointAbortRef.current = new AbortController();
-        try {
-          const places = await searchStartingPlaces(
-            selectedDestination.id,
-            value.trim(),
-            startingPointAbortRef.current.signal
-          );
-          setStartingPointSuggestions(places);
-        } catch (error) {
-          if ((error as Error).name !== 'AbortError') {
-            setStartingPointSuggestions([]);
+        startingPointTimeoutRef.current = setTimeout(async () => {
+          startingPointAbortRef.current = new AbortController();
+          try {
+            const places = await searchStartingPlaces(
+              selectedDestination.id,
+              value.trim(),
+              startingPointAbortRef.current.signal
+            );
+            setStartingPointSuggestions(places);
+          } catch (error) {
+            if ((error as Error).name !== "AbortError") {
+              setStartingPointSuggestions([]);
+            }
+          } finally {
+            setStartingPointLoading(false);
           }
-        } finally {
-          setStartingPointLoading(false);
-        }
-      }, 300);
-    } else {
-      setShowStartingPointDropdown(false);
-      setStartingPointSuggestions([]);
-      setStartingPointLoading(false);
-    }
-  }, [selectedDestination]);
+        }, 300);
+      } else {
+        setShowStartingPointDropdown(false);
+        setStartingPointSuggestions([]);
+        setStartingPointLoading(false);
+      }
+    },
+    [selectedDestination]
+  );
 
   const selectDestination = (place: Place) => {
     setSelectedDestination(place);
@@ -140,7 +158,7 @@ export default function Home() {
   const handleSwap = () => {
     const tempInput = destinationInput;
     const tempSelected = selectedDestination;
-    
+
     setDestinationInput(startingPointInput);
     setSelectedDestination(selectedStartingPoint);
     setStartingPointInput(tempInput);
@@ -169,21 +187,29 @@ export default function Home() {
           {greeting}
         </h1>
 
-        <div className="space-y-2 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+        <div
+          className="space-y-2 animate-fade-in"
+          style={{ animationDelay: "0.1s" }}
+        >
           {/* Destination Input */}
           <div className="relative">
             <Input
               placeholder="Where are you going?"
               value={destinationInput}
               onChange={(e) => handleDestinationInput(e.target.value)}
-              onFocus={() => destinationSuggestions.length > 0 && setShowDestinationDropdown(true)}
-              onBlur={() => setTimeout(() => setShowDestinationDropdown(false), 200)}
+              onFocus={() =>
+                destinationSuggestions.length > 0 &&
+                setShowDestinationDropdown(true)
+              }
+              onBlur={() =>
+                setTimeout(() => setShowDestinationDropdown(false), 200)
+              }
               className="text-base pr-10"
             />
             {destinationLoading && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
             )}
-            
+
             {/* Destination Suggestions Dropdown */}
             {showDestinationDropdown && (
               <div className="absolute z-50 w-full mt-1 bg-card border-2 border-primary/30 rounded-xl shadow-card-hover max-h-60 overflow-y-auto">
@@ -204,7 +230,9 @@ export default function Home() {
                       className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2 tap-highlight-none"
                     >
                       <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-foreground">{place.canonical_name}</span>
+                      <span className="text-foreground">
+                        {place.canonical_name}
+                      </span>
                     </button>
                   ))
                 )}
@@ -229,18 +257,27 @@ export default function Home() {
           {/* Starting Point Input */}
           <div className="relative">
             <Input
-              placeholder={selectedDestination ? "Where are you coming from?" : "Select a destination first"}
+              placeholder={
+                selectedDestination
+                  ? "Where are you coming from?"
+                  : "Select a destination first"
+              }
               value={startingPointInput}
               onChange={(e) => handleStartingPointInput(e.target.value)}
-              onFocus={() => startingPointSuggestions.length > 0 && setShowStartingPointDropdown(true)}
-              onBlur={() => setTimeout(() => setShowStartingPointDropdown(false), 200)}
+              onFocus={() =>
+                startingPointSuggestions.length > 0 &&
+                setShowStartingPointDropdown(true)
+              }
+              onBlur={() =>
+                setTimeout(() => setShowStartingPointDropdown(false), 200)
+              }
               disabled={!selectedDestination}
               className="text-base pr-10"
             />
             {startingPointLoading && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary animate-spin" />
             )}
-            
+
             {/* Starting Point Suggestions Dropdown */}
             {showStartingPointDropdown && (
               <div className="absolute z-50 w-full mt-1 bg-card border-2 border-primary/30 rounded-xl shadow-card-hover max-h-60 overflow-y-auto">
@@ -261,7 +298,9 @@ export default function Home() {
                       className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2 tap-highlight-none"
                     >
                       <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-foreground">{place.canonical_name}</span>
+                      <span className="text-foreground">
+                        {place.canonical_name}
+                      </span>
                     </button>
                   ))
                 )}
@@ -270,15 +309,15 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="mt-8 flex justify-center animate-fade-in"
+          style={{ animationDelay: "0.2s" }}
+        >
           <Button
             onClick={handleSearch}
             disabled={!canSearch}
             size="lg"
-            className={cn(
-              "min-w-[180px]",
-              canSearch && "animate-pulse-ring"
-            )}
+            className={cn("min-w-[180px]", canSearch && "animate-pulse-ring")}
           >
             Search Routes
           </Button>

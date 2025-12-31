@@ -9,7 +9,7 @@ import RouteSteps from "./pages/RouteSteps";
 import RouteSubmission from "./pages/RouteSubmission";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-
+import RequireAuth from "@/components/RequireAuth";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -22,7 +22,14 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/route-steps" element={<RouteSteps />} />
-          <Route path="/submit" element={<RouteSubmission />} />
+          <Route
+            path="/submit"
+            element={
+              <RequireAuth>
+                <RouteSubmission />
+              </RequireAuth>
+            }
+          />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

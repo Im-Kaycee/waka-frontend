@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 
 interface StepInputData {
   id: string;
-  mode: 'walk' | 'cab' | 'bus' | '';
+  mode: "walk" | "cab" | "bus" | "";
   instruction: string;
   drop_name: string;
   landmark: string;
@@ -20,7 +20,7 @@ interface StepInputData {
 
 const createEmptyStep = (): StepInputData => ({
   id: crypto.randomUUID(),
-  mode: '',
+  mode: "",
   instruction: "",
   drop_name: "",
   landmark: "",
@@ -31,10 +31,17 @@ export default function RouteSubmission() {
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
   const [startingPoint, setStartingPoint] = useState("");
-  const [steps, setSteps] = useState<StepInputData[]>([createEmptyStep(), createEmptyStep()]);
+  const [steps, setSteps] = useState<StepInputData[]>([
+    createEmptyStep(),
+    createEmptyStep(),
+  ]);
   const [submitting, setSubmitting] = useState(false);
 
-  const updateStep = (id: string, field: keyof StepInputData, value: string) => {
+  const updateStep = (
+    id: string,
+    field: keyof StepInputData,
+    value: string
+  ) => {
     setSteps((prev) =>
       prev.map((step) => (step.id === id ? { ...step, [field]: value } : step))
     );
@@ -56,7 +63,7 @@ export default function RouteSubmission() {
       startingPoint,
       steps,
     };
-    localStorage.setItem('routeSubmissionDraft', JSON.stringify(data));
+    localStorage.setItem("routeSubmissionDraft", JSON.stringify(data));
     toast({
       title: "Progress Saved",
       description: "Your route details have been saved locally.",
@@ -90,7 +97,8 @@ export default function RouteSubmission() {
     if (incompleteSteps) {
       toast({
         title: "Incomplete Steps",
-        description: "Please fill in mode, instruction, and drop name for each step.",
+        description:
+          "Please fill in mode, instruction, and drop name for each step.",
         variant: "destructive",
       });
       return;
@@ -100,7 +108,7 @@ export default function RouteSubmission() {
 
     const submissionSteps: RouteSubmissionStep[] = steps.map((step, index) => ({
       order: index + 1,
-      mode: step.mode as 'walk' | 'cab' | 'bus',
+      mode: step.mode as "walk" | "cab" | "bus",
       instruction: step.instruction,
       drop_name: step.drop_name,
       landmark: step.landmark,
@@ -108,6 +116,7 @@ export default function RouteSubmission() {
 
     const result = await submitRoute({
       destination,
+      starting_point_text: startingPoint,
       city: 1, // You may want to make this dynamic
       steps: submissionSteps,
     });
@@ -124,7 +133,7 @@ export default function RouteSubmission() {
       setDestination("");
       setStartingPoint("");
       setSteps([createEmptyStep(), createEmptyStep()]);
-      localStorage.removeItem('routeSubmissionDraft');
+      localStorage.removeItem("routeSubmissionDraft");
     } else {
       toast({
         title: "Submission Failed",
@@ -143,9 +152,7 @@ export default function RouteSubmission() {
         </h2>
 
         {/* Route Details Card */}
-        <div
-          className="bg-card rounded-xl border-2 border-primary/30 p-4 space-y-4 shadow-card animate-scale-in"
-        >
+        <div className="bg-card rounded-xl border-2 border-primary/30 p-4 space-y-4 shadow-card animate-scale-in">
           <h3 className="text-center font-semibold text-foreground">
             Enter the Route Details
           </h3>
@@ -184,7 +191,9 @@ export default function RouteSubmission() {
                 dropName={step.drop_name}
                 landmark={step.landmark}
                 onTransportModeChange={(v) => updateStep(step.id, "mode", v)}
-                onInstructionChange={(v) => updateStep(step.id, "instruction", v)}
+                onInstructionChange={(v) =>
+                  updateStep(step.id, "instruction", v)
+                }
                 onDropNameChange={(v) => updateStep(step.id, "drop_name", v)}
                 onLandmarkChange={(v) => updateStep(step.id, "landmark", v)}
                 onDelete={() => deleteStep(step.id)}

@@ -97,6 +97,23 @@ export async function login(username: string, password: string): Promise<{ succe
     if (response.ok) {
       const data = await response.json();
       setTokens(data.access, data.refresh);
+
+      // Persist user if returned by the login endpoint, otherwise save a minimal user object
+      if (data.user) {
+        setUser(data.user);
+      } else if (data.id || data.user_id || data.username) {
+        setUser({
+          id: data.id ?? data.user_id ?? 0,
+          username: (data.username as string) ?? username,
+          email: (data.email as string) ?? undefined,
+          first_name: (data.first_name as string) ?? undefined,
+          last_name: (data.last_name as string) ?? undefined,
+        });
+      } else {
+        // Minimal fallback so UI can show the username/guest logic
+        setUser({ id: 0, username });
+      }
+
       return { success: true };
     } else {
       const error = await response.json();

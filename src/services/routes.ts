@@ -100,7 +100,7 @@ export async function lookupRoutes(
   startingPlaceId: number
 ): Promise<Route[]> {
   try {
-    const url = `${API_BASE_URL}${API_ENDPOINTS.ROUTE_LOOKUP}?destination=${destinationId}&starting_place=${startingPlaceId}`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.ROUTE_LOOKUP}?destination=${destinationId}&start=${startingPlaceId}`;
     const response = await fetch(url);
     
     if (response.ok) {
@@ -138,14 +138,14 @@ export interface RouteSubmissionStep {
 
 export interface RouteSubmissionData {
   destination: string;
-  starting_point?: number;
+  starting_point_text: string;
   city: number;
   steps: RouteSubmissionStep[];
 }
 
 export async function submitRoute(data: RouteSubmissionData): Promise<{ success: boolean; error?: string }> {
   try {
-    const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.SUBMISSIONS}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/v1/submissions/submit-route`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
