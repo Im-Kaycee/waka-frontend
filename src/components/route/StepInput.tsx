@@ -38,7 +38,7 @@ export function StepInput({
       className={cn(
         "bg-card rounded-xl border-2 border-primary/30 p-4 space-y-3",
         "transition-all duration-300 shadow-card",
-        className
+        className,
       )}
       style={style}
     >
@@ -53,7 +53,7 @@ export function StepInput({
           </button>
         )}
       </div>
-      
+
       {/* Transport Mode Select */}
       <select
         value={transportMode}
@@ -64,8 +64,10 @@ export function StepInput({
         <option value="walk">Walk</option>
         <option value="cab">Cab</option>
         <option value="bus">Bus</option>
+        <option value="keke">Keke</option>
+        <option value="bike">Bike</option>
       </select>
-      
+
       <Input
         placeholder="Enter Instruction"
         value={instruction}

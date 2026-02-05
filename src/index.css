@@ -15,8 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 15%;
 
-    --primary: 158 64% 52%;
-    --primary-foreground: 0 0% 100%;
+ --primary: 158 64% 42%;
+--primary-foreground: 0 0% 100%;
 
     --secondary: 158 64% 96%;
     --secondary-foreground: 158 64% 30%;
@@ -32,14 +32,14 @@
 
     --border: 220 14% 90%;
     --input: 220 14% 90%;
-    --ring: 158 64% 52%;
+    --ring: 158 64% 42%;
 
     --radius: 1rem;
 
     /* Custom tokens */
     --nav-height: 4rem;
     --header-height: 3.5rem;
-    --success: 158 64% 52%;
+    --success: 158 64% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;

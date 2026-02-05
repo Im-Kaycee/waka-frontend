@@ -18,12 +18,12 @@ export default function RouteSteps() {
   useEffect(() => {
     const routeStr = sessionStorage.getItem("selectedRoute");
     const paramsStr = sessionStorage.getItem("searchParams");
-    
+
     if (!routeStr) {
       navigate("/routes");
       return;
     }
-    
+
     setRoute(JSON.parse(routeStr));
     if (paramsStr) {
       setSearchParams(JSON.parse(paramsStr));
@@ -68,9 +68,12 @@ export default function RouteSteps() {
             />
           ))}
         </div>
-        
+
         {route.notes && (
-          <div className="mt-4 bg-accent rounded-xl p-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <div
+            className="mt-4 bg-accent rounded-xl p-4 animate-fade-in"
+            style={{ animationDelay: "0.3s" }}
+          >
             <h3 className="font-semibold text-foreground mb-2">Notes</h3>
             <p className="text-sm text-muted-foreground">{route.notes}</p>
           </div>

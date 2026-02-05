@@ -109,15 +109,25 @@ export default function Routes() {
           Available Routes
         </h2>
         <p className="text-sm text-muted-foreground mb-4 animate-fade-in">
-          {routes.length} route{routes.length !== 1 ? 's' : ''} found
+          {routes.length} route{routes.length !== 1 ? "s" : ""} found
         </p>
         <div className="space-y-3">
           {routes.map((route, index) => (
             <RouteCard
               key={route.id}
               duration={route.estimated_time}
-              difficulty={route.difficulty ? route.difficulty.charAt(0).toUpperCase() + route.difficulty.slice(1) : ''}
-              description={route.notes || `${route.steps.length} step${route.steps.length !== 1 ? 's' : ''}`}
+              difficulty={
+                route.difficulty
+                  ? route.difficulty.charAt(0).toUpperCase() +
+                    route.difficulty.slice(1)
+                  : ""
+              }
+              description={
+                route.notes ||
+                `${route.steps.length} step${
+                  route.steps.length !== 1 ? "s" : ""
+                }`
+              }
               isRecommended={route.recommended}
               onClick={() => handleRouteClick(route)}
               className="animate-slide-up"

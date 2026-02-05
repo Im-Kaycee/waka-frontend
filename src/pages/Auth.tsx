@@ -179,7 +179,11 @@ export default function Auth() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
             </button>
           </div>
 
@@ -199,13 +203,30 @@ export default function Auth() {
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 {isLogin ? "Signing in..." : "Creating account..."}
               </>
+            ) : isLogin ? (
+              "Sign In"
             ) : (
-              isLogin ? "Sign In" : "Create Account"
+              "Create Account"
             )}
           </Button>
+
+          {isLogin && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
         </form>
 
-        <div className="mt-6 text-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="mt-6 text-center animate-fade-in"
+          style={{ animationDelay: "0.2s" }}
+        >
           <button
             onClick={() => {
               setIsLogin(!isLogin);
@@ -214,10 +235,12 @@ export default function Auth() {
             }}
             className={cn(
               "text-primary font-medium transition-all duration-200",
-              "hover:underline active:scale-95 tap-highlight-none"
+              "hover:underline active:scale-95 tap-highlight-none",
             )}
           >
-            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+            {isLogin
+              ? "Don't have an account? Sign Up"
+              : "Already have an account? Sign In"}
           </button>
         </div>
 

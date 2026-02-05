@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 
 interface StepInputData {
   id: string;
-  mode: "walk" | "cab" | "bus" | "";
+  mode: "walk" | "cab" | "bus" | "keke" | "bike" | "";
   instruction: string;
   drop_name: string;
   landmark: string;
@@ -40,10 +40,10 @@ export default function RouteSubmission() {
   const updateStep = (
     id: string,
     field: keyof StepInputData,
-    value: string
+    value: string,
   ) => {
     setSteps((prev) =>
-      prev.map((step) => (step.id === id ? { ...step, [field]: value } : step))
+      prev.map((step) => (step.id === id ? { ...step, [field]: value } : step)),
     );
   };
 
@@ -91,7 +91,7 @@ export default function RouteSubmission() {
     }
 
     const incompleteSteps = steps.some(
-      (step) => !step.mode || !step.instruction || !step.drop_name
+      (step) => !step.mode || !step.instruction || !step.drop_name,
     );
 
     if (incompleteSteps) {

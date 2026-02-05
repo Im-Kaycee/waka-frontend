@@ -183,12 +183,15 @@ export default function Home() {
   return (
     <MobileLayout>
       <div className="flex flex-col min-h-[calc(100vh-5rem)] justify-center px-6 py-8">
-        <h1 className="text-2xl font-bold text-foreground text-center mb-8 animate-fade-in">
+        <h1
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center mb-8 animate-fade-in truncate max-w-full"
+          title={greeting}
+        >
           {greeting}
         </h1>
 
         <div
-          className="space-y-2 animate-fade-in"
+          className="space-y-2 animate-fade-in relative"
           style={{ animationDelay: "0.1s" }}
         >
           {/* Destination Input */}
@@ -212,31 +215,39 @@ export default function Home() {
 
             {/* Destination Suggestions Dropdown */}
             {showDestinationDropdown && (
-              <div className="absolute z-50 w-full mt-1 bg-card border-2 border-primary/30 rounded-xl shadow-card-hover max-h-60 overflow-y-auto">
-                {destinationLoading ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
-                    Searching...
-                  </div>
-                ) : destinationSuggestions.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    No destinations found
-                  </div>
-                ) : (
-                  destinationSuggestions.map((place) => (
-                    <button
-                      key={place.id}
-                      onClick={() => selectDestination(place)}
-                      className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2 tap-highlight-none"
-                    >
-                      <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-foreground">
-                        {place.canonical_name}
-                      </span>
-                    </button>
-                  ))
-                )}
-              </div>
+              <>
+                {/* Backdrop overlay */}
+                <div
+                  className="fixed inset-0 z-[90]"
+                  onClick={() => setShowDestinationDropdown(false)}
+                />
+
+                <div className="absolute z-[100] w-full mt-1 bg-white dark:bg-gray-900 border-2 border-primary rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+                  {destinationLoading ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                      Searching...
+                    </div>
+                  ) : destinationSuggestions.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No destinations found
+                    </div>
+                  ) : (
+                    destinationSuggestions.map((place) => (
+                      <button
+                        key={place.id}
+                        onClick={() => selectDestination(place)}
+                        className="w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors flex items-center gap-2 tap-highlight-none border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                      >
+                        <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-foreground font-medium">
+                          {place.canonical_name}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </>
             )}
           </div>
 
@@ -245,7 +256,7 @@ export default function Home() {
             onClick={handleSwap}
             disabled={!selectedDestination && !selectedStartingPoint}
             className={cn(
-              "mx-auto flex items-center justify-center w-10 h-10 rounded-full",
+              "relative z-0 mx-auto flex items-center justify-center w-10 h-10 rounded-full",
               "bg-muted text-muted-foreground transition-all duration-200",
               "hover:bg-primary hover:text-primary-foreground hover:rotate-180",
               "active:scale-90 tap-highlight-none disabled:opacity-50"
@@ -280,37 +291,49 @@ export default function Home() {
 
             {/* Starting Point Suggestions Dropdown */}
             {showStartingPointDropdown && (
-              <div className="absolute z-50 w-full mt-1 bg-card border-2 border-primary/30 rounded-xl shadow-card-hover max-h-60 overflow-y-auto">
-                {startingPointLoading ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
-                    Searching...
-                  </div>
-                ) : startingPointSuggestions.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    No starting points found
-                  </div>
-                ) : (
-                  startingPointSuggestions.map((place) => (
-                    <button
-                      key={place.id}
-                      onClick={() => selectStartingPoint(place)}
-                      className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2 tap-highlight-none"
-                    >
-                      <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-foreground">
-                        {place.canonical_name}
-                      </span>
-                    </button>
-                  ))
-                )}
-              </div>
+              <>
+                {/* Backdrop overlay */}
+                <div
+                  className="fixed inset-0 z-[90]"
+                  onClick={() => setShowStartingPointDropdown(false)}
+                />
+
+                <div className="absolute z-[100] w-full mt-1 bg-white dark:bg-gray-900 border-2 border-primary rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+                  {startingPointLoading ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                      Searching...
+                    </div>
+                  ) : startingPointSuggestions.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No starting points found
+                    </div>
+                  ) : (
+                    startingPointSuggestions.map((place) => (
+                      <button
+                        key={place.id}
+                        onClick={() => selectStartingPoint(place)}
+                        className="w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors flex items-center gap-2 tap-highlight-none border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                      >
+                        <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-foreground font-medium">
+                          {place.canonical_name}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
 
         <div
-          className="mt-8 flex justify-center animate-fade-in"
+          className={cn(
+            "mt-8 flex justify-center animate-fade-in relative z-0",
+            (showStartingPointDropdown || showDestinationDropdown) &&
+              "invisible pointer-events-none"
+          )}
           style={{ animationDelay: "0.2s" }}
         >
           <Button
