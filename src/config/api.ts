@@ -1,5 +1,5 @@
 // API Configuration - Update this to your Django server URL
-export const API_BASE_URL = 'http://localhost:8000';
+export const API_BASE_URL = 'https://api.wakaapp.online';
 
 export const API_ENDPOINTS = {
   // Auth
