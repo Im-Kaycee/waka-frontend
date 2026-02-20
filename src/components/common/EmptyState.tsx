@@ -8,6 +8,7 @@ interface EmptyStateProps {
   actionLabel?: string;
   onAction?: () => void;
   className?: string;
+  additionalContent?: React.ReactNode;
 }
 
 export function EmptyState({
@@ -17,19 +18,27 @@ export function EmptyState({
   actionLabel,
   onAction,
   className,
+  additionalContent,
 }: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center px-6 py-12 text-center", className)}>
-      {icon && (
-        <div className="mb-6 animate-fade-in">
-          {icon}
-        </div>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center px-6 py-12 text-center",
+        className,
       )}
-      <h2 className="text-xl font-semibold text-foreground mb-2 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+    >
+      {icon && <div className="mb-6 animate-fade-in">{icon}</div>}
+      <h2
+        className="text-xl font-semibold text-foreground mb-2 animate-fade-in"
+        style={{ animationDelay: "0.1s" }}
+      >
         {title}
       </h2>
       {description && (
-        <p className="text-muted-foreground mb-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <p
+          className="text-muted-foreground mb-6 animate-fade-in"
+          style={{ animationDelay: "0.2s" }}
+        >
           {description}
         </p>
       )}
@@ -41,6 +50,14 @@ export function EmptyState({
         >
           {actionLabel}
         </Button>
+      )}
+      {additionalContent && (
+        <div
+          className="mt-8 animate-fade-in"
+          style={{ animationDelay: "0.4s" }}
+        >
+          {additionalContent}
+        </div>
       )}
     </div>
   );

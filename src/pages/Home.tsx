@@ -4,6 +4,12 @@ import { ArrowDown, MapPin, Loader2 } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useGreeting } from "@/hooks/useGreeting";
 import { getUser } from "@/services/auth";
 import {
@@ -24,14 +30,14 @@ export default function Home() {
 
   // Selected places
   const [selectedDestination, setSelectedDestination] = useState<Place | null>(
-    null
+    null,
   );
   const [selectedStartingPoint, setSelectedStartingPoint] =
     useState<Place | null>(null);
 
   // Suggestions
   const [destinationSuggestions, setDestinationSuggestions] = useState<Place[]>(
-    []
+    [],
   );
   const [startingPointSuggestions, setStartingPointSuggestions] = useState<
     Place[]
@@ -78,7 +84,7 @@ export default function Home() {
         try {
           const places = await searchDestinations(
             value.trim(),
-            destinationAbortRef.current.signal
+            destinationAbortRef.current.signal,
           );
           setDestinationSuggestions(places);
         } catch (error) {
@@ -121,7 +127,7 @@ export default function Home() {
             const places = await searchStartingPlaces(
               selectedDestination.id,
               value.trim(),
-              startingPointAbortRef.current.signal
+              startingPointAbortRef.current.signal,
             );
             setStartingPointSuggestions(places);
           } catch (error) {
@@ -138,7 +144,7 @@ export default function Home() {
         setStartingPointLoading(false);
       }
     },
-    [selectedDestination]
+    [selectedDestination],
   );
 
   const selectDestination = (place: Place) => {
@@ -172,7 +178,7 @@ export default function Home() {
         JSON.stringify({
           from: selectedStartingPoint,
           to: selectedDestination,
-        })
+        }),
       );
       navigate("/routes");
     }
@@ -259,7 +265,7 @@ export default function Home() {
               "relative z-0 mx-auto flex items-center justify-center w-10 h-10 rounded-full",
               "bg-muted text-muted-foreground transition-all duration-200",
               "hover:bg-primary hover:text-primary-foreground hover:rotate-180",
-              "active:scale-90 tap-highlight-none disabled:opacity-50"
+              "active:scale-90 tap-highlight-none disabled:opacity-50",
             )}
           >
             <ArrowDown className="h-5 w-5" />
@@ -332,7 +338,7 @@ export default function Home() {
           className={cn(
             "mt-8 flex justify-center animate-fade-in relative z-0",
             (showStartingPointDropdown || showDestinationDropdown) &&
-              "invisible pointer-events-none"
+              "invisible pointer-events-none",
           )}
           style={{ animationDelay: "0.2s" }}
         >
@@ -344,6 +350,33 @@ export default function Home() {
           >
             Search Routes
           </Button>
+        </div>
+
+        <div
+          className="mt-12 animate-fade-in"
+          style={{ animationDelay: "0.3s" }}
+        >
+          <Accordion type="single" collapsible>
+            <AccordionItem value="about-waka">
+              <AccordionTrigger className="text-sm font-medium">
+                I don't see my route, why?{" "}
+                <span className="ml-2 text-primary">Learn more</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="text-sm space-y-3 text-muted-foreground">
+                  <p>
+                    Waka is a work in progress and we're constantly improving.
+                    If you don't find a route, please wait and we'll add it in
+                    time.
+                  </p>
+                  <p>
+                    Since Waka is community-oriented, you can contribute routes
+                    you already know. Help us grow!
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </MobileLayout>
